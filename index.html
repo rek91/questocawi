@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Il Made in Italy nell'immaginario collettivo — Questionario CAWI</title>
+<style>
+  :root{
+    --blu:#1A365D; --blu2:#376EAB; --viola:#6D63AB; --turch:#35A0AB;
+    --ink:#22303C; --grigio:#6B7A88; --linea:#D9E1EA; --tenue:#F2F6FA; --bg:#FFFFFF;
+  }
+  :root:not([data-theme="light"]){}
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#E8EEF4; --grigio:#9DAAB6; --linea:#2C3A46; --tenue:#18222C; --bg:#0F1720;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#E8EEF4; --grigio:#9DAAB6; --linea:#2C3A46; --tenue:#18222C; --bg:#0F1720;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,Helvetica,sans-serif;
+    font-size:16px; line-height:1.5; min-height:100vh;
+  }
+  .wrap{max-width:620px;margin:0 auto;padding:0 20px 80px}
+
+  /* ---------- copertina ---------- */
+  #cover{
+    min-height:100vh;display:flex;flex-direction:column;justify-content:center;
+    background:linear-gradient(135deg,#376EAB 0%,#3C7BAE 35%,#5A6DAC 65%,#35A0AB 100%);
+    color:#fff;padding:40px 24px;
+  }
+  #cover .inner{max-width:620px;margin:0 auto;width:100%}
+  #cover .kicker{font-size:12px;letter-spacing:2.5px;font-weight:700;color:#CFE0F0;margin-bottom:22px}
+  #cover h1{font-size:clamp(26px,6vw,40px);line-height:1.15;margin:0 0 18px;font-weight:700}
+  #cover .rule{width:70px;height:3px;background:#fff;opacity:.8;margin:22px 0}
+  #cover p{color:#DCE8F4;margin:0 0 10px;font-size:15px}
+  #cover .meta{margin-top:36px;font-size:13px;color:#BCD2E6}
+  .btn{
+    display:inline-block;border:0;cursor:pointer;font:inherit;font-weight:700;
+    background:#fff;color:#1A365D;padding:15px 30px;border-radius:8px;margin-top:30px;
+  }
+  .btn:hover{opacity:.92}
+  .btn.ghost{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.55);margin-left:10px}
+
+  /* ---------- barra di avanzamento ---------- */
+  #top{position:sticky;top:0;background:var(--bg);padding:16px 0 12px;z-index:5;border-bottom:1px solid var(--linea)}
+  #bar{height:6px;background:var(--linea);border-radius:3px;overflow:hidden}
+  #fill{height:100%;width:0;background:linear-gradient(90deg,var(--blu2),var(--turch));transition:width .25s}
+  #meta{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:12.5px;color:var(--grigio)}
+  #sez{font-weight:700;letter-spacing:.6px;text-transform:uppercase;font-size:11.5px;color:var(--viola)}
+
+  /* ---------- domanda ---------- */
+  .q{padding-top:30px}
+  h2{font-size:20px;line-height:1.3;margin:0 0 6px;font-weight:700}
+  .hint{color:var(--grigio);font-size:13.5px;margin:0 0 6px}
+  .item{background:var(--tenue);border:1px solid var(--linea);border-radius:8px;padding:12px 16px;margin:14px 0 6px;font-weight:700;color:var(--blu2);font-size:14.5px}
+  .counter{font-size:12.5px;color:var(--grigio);margin-bottom:12px}
+
+  .opt{
+    display:flex;align-items:center;gap:14px;width:100%;text-align:left;
+    min-height:52px;padding:10px 16px;margin:9px 0;border-radius:8px;
+    border:1.5px solid var(--linea);background:var(--bg);color:var(--ink);
+    font:inherit;font-size:15px;cursor:pointer;transition:.12s;
+  }
+  .opt:hover{border-color:var(--blu2)}
+  .opt .dot{width:20px;height:20px;border-radius:50%;border:2px solid #9FADBA;flex:0 0 20px;position:relative}
+  .opt .dot.sq{border-radius:5px}
+  .opt.on{border-color:var(--blu2);background:rgba(55,110,171,.10);font-weight:700}
+  .opt.on .dot{border-color:var(--blu2)}
+  .opt.on .dot:after{content:"";position:absolute;inset:3px;border-radius:50%;background:var(--blu2)}
+  .opt.on .dot.sq:after{border-radius:2px}
+  .rank{margin-left:auto;background:var(--blu2);color:#fff;font-weight:700;font-size:13px;
+        width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+  textarea{width:100%;min-height:120px;padding:14px;border-radius:8px;border:1.5px solid var(--linea);
+           background:var(--bg);color:var(--ink);font:inherit;font-size:15px;resize:vertical}
+  input[type=text]{width:100%;padding:13px 14px;border-radius:8px;border:1.5px solid var(--linea);
+           background:var(--bg);color:var(--ink);font:inherit;font-size:15px}
+
+  .nav{display:flex;gap:12px;margin-top:26px;align-items:center;flex-wrap:wrap}
+  .nav button{font:inherit;font-size:15px;font-weight:700;border-radius:8px;cursor:pointer;padding:14px 26px;border:0}
+  .next{background:var(--blu2);color:#fff}
+  .next[disabled]{opacity:.35;cursor:not-allowed}
+  .back{background:transparent;color:var(--grigio);border:1.5px solid var(--linea)!important}
+  .skip{margin-left:auto;background:none;border:0;color:var(--grigio);font-size:12.5px;text-decoration:underline;cursor:pointer;padding:6px}
+
+  /* ---------- finale ---------- */
+  #end h2{font-size:24px}
+  .riep{border:1px solid var(--linea);border-radius:10px;overflow:hidden;margin-top:22px}
+  .riep .row{display:flex;gap:14px;padding:11px 16px;border-bottom:1px solid var(--linea);font-size:13.5px}
+  .riep .row:last-child{border-bottom:0}
+  .riep .row:nth-child(even){background:var(--tenue)}
+  .riep .k{flex:0 0 74px;font-weight:700;color:var(--blu2)}
+  .riep .v{color:var(--ink)}
+  .nota{background:var(--tenue);border:1px solid var(--linea);border-radius:8px;padding:14px 16px;font-size:13px;color:var(--grigio);margin-top:24px}
+  .hidden{display:none}
+</style>
+</head>
+<body>
+
+<div id="cover">
+  <div class="inner">
+    <div class="kicker">QUESTIONARIO DI RICERCA · VERSIONE CAWI</div>
+    <h1>Il Made in Italy<br>nell'immaginario collettivo</h1>
+    <div class="rule"></div>
+    <p>Come si forma e come si distribuisce socialmente la rappresentazione del Made in Italy</p>
+    <p style="font-size:13.5px;margin-top:16px">Il questionario è anonimo e richiede circa otto minuti. Non esistono risposte giuste o sbagliate: ci interessa la Sua opinione personale.</p>
+    <button class="btn" onclick="start()">Inizia il questionario</button>
+    <button class="btn ghost" onclick="demo()">Modalità dimostrazione</button>
+    <div class="meta">
+      Corso di Metodologia e tecniche della ricerca sociale<br>
+      Università degli Studi della Tuscia
+    </div>
+  </div>
+</div>
+
+<div id="app" class="hidden">
+  <div id="top"><div class="wrap" style="padding-bottom:0">
+    <div id="bar"><div id="fill"></div></div>
+    <div id="meta"><span id="sez"></span><span id="pos"></span></div>
+  </div></div>
+  <div class="wrap"><div id="screen" class="q"></div></div>
+</div>
+
+<script>
+/* ============================================================
+   Definizione del questionario
+   tipo: single | multi | rank | matrix | text | open
+   ============================================================ */
+const S4 = ['Per nulla','Poco','Abbastanza','Molto'];
+const FREQ = ['Mai','Una volta','Qualche volta','Spesso'];
+
+const Q = [
+ {s:'A · La sua idea di Made in Italy', n:'D1', tipo:'rank', max:3,
+  t:'Quali di questi elementi associa maggiormente al «Made in Italy»?',
+  h:'Scelga i tre più importanti, toccandoli nell\'ordine: il primo tocco vale 1.',
+  o:['Il cibo e il vino','La moda e l\'abbigliamento','L\'arredamento e il design','Le automobili e la meccanica','L\'arte e i monumenti','Il paesaggio e i luoghi','La lavorazione artigianale','Le imprese familiari','La creatività e lo stile','Il lusso e i grandi marchi','La qualità e l\'affidabilità','Lo stile di vita italiano']},
+
+ {s:'A · La sua idea di Made in Italy', n:'D2', tipo:'single',
+  t:'Secondo Lei, qual è il settore che l\'Italia esporta di più nel mondo, in termini di valore?',
+  h:'Una sola risposta',
+  o:['Prodotti alimentari e bevande','Moda, tessile e abbigliamento','Macchinari e apparecchiature industriali','Arredamento e design','Prodotti farmaceutici','Automobili e mezzi di trasporto','Non saprei']},
+
+ {s:'A · La sua idea di Made in Italy', n:'D3', tipo:'matrix', scala:S4,
+  t:'Quanto ritiene che questo settore sia importante per le esportazioni italiane?',
+  items:['Prodotti alimentari e bevande','Moda e abbigliamento','Macchinari e apparecchiature industriali','Arredamento e design','Prodotti farmaceutici','Automobili e mezzi di trasporto']},
+
+ {s:'A · La sua idea di Made in Italy', n:'D4', tipo:'matrix', scala:S4,
+  t:'Quanto associa questo elemento ai prodotti italiani?',
+  items:['Qualità dei materiali','Tradizione tramandata di generazione in generazione','Legame con un territorio specifico','Saper fare artigiano e lavorazione manuale','Impresa a conduzione familiare','Bellezza estetica e cura del dettaglio','Convivialità e piacere di vivere','Creatività e design','Innovazione tecnologica','Lusso ed esclusività']},
+
+ {s:'B · Da dove viene questa immagine', n:'D5', tipo:'multi', max:3,
+  t:'Attraverso quali canali si è formata la Sua idea dei prodotti italiani?',
+  h:'Massimo 3 risposte',
+  o:['Esperienza diretta di acquisto e uso','Televisione e pubblicità','Social network e influencer','Giornali, riviste e siti di informazione','Famiglia e amici','Scuola o percorso di studi','Lavoro o ambito professionale','Viaggi ed esperienze all\'estero','Film, serie e documentari','Fiere ed eventi']},
+
+ {s:'B · Da dove viene questa immagine', n:'D6', tipo:'single',
+  t:'Con quale frequenza si informa su temi di economia o industria italiana?',
+  h:'Una sola risposta',
+  o:['Tutti i giorni o quasi','Qualche volta a settimana','Qualche volta al mese','Raramente','Mai']},
+
+ {s:'B · Da dove viene questa immagine', n:'D7', tipo:'matrix', scala:S4,
+  t:'Quanto si ritiene d\'accordo con questa affermazione?',
+  items:['Il Made in Italy è soprattutto una questione di cibo e moda','L\'immagine dell\'Italia all\'estero è legata più alla cultura che all\'industria','Gli italiani conoscono poco la propria industria manifatturiera','La pubblicità racconta un\'immagine parziale dei prodotti italiani','Il cinema e le serie hanno costruito un\'idea idealizzata dell\'Italia']},
+
+ {s:'C · Lo sguardo degli altri', n:'D8', tipo:'single',
+  t:'Secondo Lei, all\'estero l\'immagine dei prodotti italiani è:',
+  h:'Una sola risposta',
+  o:['Migliore di quella che ne abbiamo noi italiani','Uguale alla nostra','Peggiore di quella che ne abbiamo noi italiani','Non saprei']},
+
+ {s:'C · Lo sguardo degli altri', n:'D9', tipo:'multi', max:2,
+  t:'Secondo Lei, che cosa apprezzano soprattutto gli stranieri dei prodotti italiani?',
+  h:'Massimo 2 risposte',
+  o:['Il cibo e il vino','La moda e lo stile','Il lusso e l\'esclusività','L\'arte e la cultura','La lavorazione artigianale','La qualità tecnica','Lo stile di vita che rappresentano','Non saprei']},
+
+ {s:'D · Scelte di consumo', n:'D10', tipo:'single',
+  t:'Quando acquista un prodotto, quanta attenzione presta al Paese di produzione?',
+  h:'Una sola risposta',
+  o:['Molta: lo verifico quasi sempre','Abbastanza: lo guardo per alcune categorie','Poca: solo occasionalmente','Nessuna: non ci faccio caso']},
+
+ {s:'D · Scelte di consumo', n:'D11', tipo:'single',
+  t:'Sarebbe disposto a pagare un prezzo più alto per un prodotto italiano rispetto a uno straniero equivalente?',
+  h:'Una sola risposta',
+  o:['Sì, anche molto di più','Sì, ma solo un poco di più','Dipende dal tipo di prodotto','No']},
+
+ {s:'D · Scelte di consumo', n:'D12', tipo:'single',
+  t:'Qual è il motivo principale per cui sceglierebbe un prodotto italiano?',
+  h:'Una sola risposta',
+  o:['La qualità è migliore','Sostengo il lavoro e l\'economia del mio Paese','Mi fido di più di ciò che è prodotto qui','Per le condizioni di lavoro e il rispetto dell\'ambiente','Per il gusto o lo stile','Per una questione di salute e genuinità','Non sceglierei un prodotto per la sua origine']},
+
+ {s:'E · Identità, critica e sostenibilità', n:'D13', tipo:'matrix', scala:S4,
+  t:'Quanto si ritiene d\'accordo con questa affermazione?',
+  items:['Il Made in Italy è un motivo di orgoglio nazionale','I prodotti italiani raccontano qualcosa di come siamo','Comprare italiano è anche un modo di sostenere il Paese','Il valore dei prodotti italiani è riconosciuto più all\'estero che in Italia','Possedere un prodotto italiano dice qualcosa di chi lo possiede']},
+
+ {s:'E · Identità, critica e sostenibilità', n:'D14', tipo:'matrix', scala:S4,
+  t:'E quanto si ritiene d\'accordo con questa?',
+  items:['Il Made in Italy è ormai più un marchio commerciale che una realtà','Molti marchi storici italiani sono stati venduti a gruppi stranieri','Dietro l\'etichetta «italiano» si nascondono condizioni di lavoro poco corrette','La qualità da sola non basta: servono trasparenza e responsabilità','Un prodotto italiano dovrebbe garantire anche la sostenibilità ambientale','Voglio sapere chi ha prodotto ciò che compro e in quali condizioni','L\'industria italiana sta perdendo terreno rispetto ad altri Paesi']},
+
+ {s:'E · Identità, critica e sostenibilità', n:'D15', tipo:'single',
+  t:'Secondo Lei, il Made in Italy nei prossimi dieci anni:',
+  h:'Una sola risposta',
+  o:['Rafforzerà la propria posizione nel mondo','Resterà più o meno come oggi','Perderà terreno rispetto ad altri Paesi','Non saprei']},
+
+ {s:'F · Il ruolo pubblico', n:'D16', tipo:'single',
+  t:'Secondo Lei, di chi dovrebbe essere principalmente il compito di far conoscere i prodotti italiani all\'estero?',
+  h:'Una sola risposta',
+  o:['Delle singole imprese che producono','Dello Stato e delle istituzioni nazionali','Delle Regioni e degli enti locali','Delle associazioni di categoria e dei consorzi','Di nessuno: i prodotti si fanno conoscere da soli','Non saprei']},
+
+ {s:'F · Il ruolo pubblico', n:'D17', tipo:'multi', max:6,
+  t:'Quali di questi soggetti conosce, anche solo di nome?',
+  h:'Sono possibili più risposte',
+  o:['Le Camere di commercio','Il Ministero degli Affari Esteri','L\'Agenzia ICE per la promozione all\'estero','Gli enti regionali per l\'internazionalizzazione','I consorzi di tutela dei prodotti tipici','Nessuno di questi']},
+
+ {s:'F · Il ruolo pubblico', n:'D18', tipo:'single',
+  t:'Quanto ritiene di conoscere l\'attività dell\'Agenzia ICE, l\'agenzia pubblica che promuove le imprese italiane all\'estero?',
+  h:'Una sola risposta',
+  o:['Non ne avevo mai sentito parlare','Ne ho sentito parlare, ma non so che cosa faccia','So per grandi linee di che cosa si occupa','Conosco bene la sua attività']},
+
+ {s:'G · Esperienze e consumi culturali', n:'D19', tipo:'matrix', scala:FREQ,
+  t:'Nell\'ultimo anno, con quale frequenza le è capitato di fare questa cosa?',
+  items:['Visitare una fiera o un mercato di prodotti tipici','Viaggiare o soggiornare all\'estero','Seguire notizie o programmi sull\'industria italiana','Visitare un\'azienda, una cantina o un luogo di produzione','Leggere un libro non per motivi di studio o lavoro','Visitare un museo o una mostra','Assistere a un concerto, uno spettacolo teatrale o un film al cinema']},
+
+ {s:'G · Esperienze e consumi culturali', n:'D20', tipo:'single',
+  t:'Le è mai capitato di vedere da vicino come viene prodotto un bene italiano?',
+  h:'Una sola risposta',
+  o:['Sì, per motivi di lavoro','Sì, come visitatore o turista','Sì, tramite familiari o conoscenti','No, mai']},
+
+ {s:'G · Esperienze e consumi culturali', n:'D21', tipo:'single',
+  t:'A quale classe sociale ritiene di appartenere?',
+  h:'Una sola risposta',
+  o:['Classe popolare','Classe medio-bassa','Classe media','Classe medio-alta','Classe alta','Non mi riconosco in nessuna di queste']},
+
+ {s:'G · Esperienze e consumi culturali', n:'D22', tipo:'open',
+  t:'C\'è qualcosa che vorrebbe aggiungere sul rapporto tra l\'Italia e i suoi prodotti?',
+  h:'Domanda facoltativa'},
+
+ {s:'H · Dati strutturali', n:'DS1', tipo:'single', t:'Ha la cittadinanza italiana?', h:'Una sola risposta', o:['Sì','No']},
+ {s:'H · Dati strutturali', n:'DS2', tipo:'single', t:'Genere', h:'Una sola risposta', o:['Donna','Uomo','Altro','Preferisco non rispondere']},
+ {s:'H · Dati strutturali', n:'DS3', tipo:'text', t:'Anno di nascita', h:'Indichi le quattro cifre, per esempio 1987'},
+ {s:'H · Dati strutturali', n:'DS4', tipo:'single', t:'Titolo di studio', h:'Una sola risposta',
+  o:['Licenza elementare o media','Diploma di scuola superiore','Laurea triennale','Laurea magistrale','Titolo post-laurea']},
+ {s:'H · Dati strutturali', n:'DS5', tipo:'single', t:'Condizione professionale', h:'Una sola risposta',
+  o:['Occupato alle dipendenze','Lavoratore autonomo o libero professionista','Imprenditore','Studente','In cerca di occupazione','Pensionato','Altro']},
+ {s:'H · Dati strutturali', n:'DS6', tipo:'text', t:'Regione di residenza', h:'Scriva il nome della regione'},
+ {s:'H · Dati strutturali', n:'DS7', tipo:'single', t:'Ampiezza del comune di residenza', h:'Una sola risposta',
+  o:['Fino a 10.000 abitanti','Da 10.001 a 50.000','Da 50.001 a 250.000','Oltre 250.000']},
+ {s:'H · Dati strutturali', n:'DS8', tipo:'single', t:'Ha vissuto o lavorato all\'estero per almeno sei mesi?', h:'Una sola risposta', o:['Sì','No']},
+];
+
+/* ---------- costruzione delle schermate ---------- */
+const SCR = [];
+Q.forEach((q, qi) => {
+  if (q.tipo === 'matrix') {
+    q.items.forEach((it, ii) => SCR.push({q, qi, item:it, ii, tot:q.items.length}));
+  } else {
+    SCR.push({q, qi});
+  }
+});
+
+const R = {};          // risposte
+let i = 0;             // schermata corrente
+
+const el = id => document.getElementById(id);
+
+function start(){ el('cover').style.display='none'; el('app').classList.remove('hidden'); i=0; draw(); }
+function demo(){
+  // compila a caso per mostrare rapidamente il funzionamento
+  SCR.forEach(sc=>{
+    const q=sc.q, k=key(sc);
+    if(q.tipo==='matrix') R[k]=q.scala[Math.floor(Math.random()*q.scala.length)];
+    else if(q.tipo==='single') R[k]=q.o[Math.floor(Math.random()*q.o.length)];
+    else if(q.tipo==='multi') R[k]=[q.o[0]];
+    else if(q.tipo==='rank') R[k]=[q.o[0],q.o[3],q.o[6]];
+    else if(q.tipo==='text') R[k]='—';
+    else R[k]='';
+  });
+  el('cover').style.display='none'; el('app').classList.remove('hidden');
+  i = SCR.length; draw();
+}
+function key(sc){ return sc.q.tipo==='matrix' ? sc.q.n+'_'+(sc.ii+1) : sc.q.n; }
+
+function draw(){
+  if (i >= SCR.length) return fine();
+  const sc = SCR[i], q = sc.q, k = key(sc);
+  const perc = Math.round(i / SCR.length * 100);
+  el('fill').style.width = perc + '%';
+  el('sez').textContent = q.s;
+  el('pos').textContent = 'Schermata ' + (i+1) + ' di ' + SCR.length;
+
+  let h = '<h2>' + q.t + '</h2>';
+  if (q.h) h += '<p class="hint">' + q.h + '</p>';
+  if (q.tipo === 'matrix'){
+    h += '<div class="item">' + sc.item + '</div>';
+    h += '<div class="counter">Elemento ' + (sc.ii+1) + ' di ' + sc.tot + '</div>';
+    q.scala.forEach(v => h += opt(v, R[k]===v, 'pick', false));
+  }
+  else if (q.tipo === 'single'){
+    q.o.forEach(v => h += opt(v, R[k]===v, 'pick', false));
+  }
+  else if (q.tipo === 'multi'){
+    const cur = R[k] || [];
+    q.o.forEach(v => h += opt(v, cur.includes(v), 'toggle', true));
+  }
+  else if (q.tipo === 'rank'){
+    const cur = R[k] || [];
+    q.o.forEach(v => {
+      const p = cur.indexOf(v);
+      h += '<button class="opt' + (p>=0?' on':'') + '" onclick="rank(\'' + esc(v) + '\')">' +
+           '<span class="dot sq"></span><span>' + v + '</span>' +
+           (p>=0 ? '<span class="rank">' + (p+1) + '</span>' : '') + '</button>';
+    });
+  }
+  else if (q.tipo === 'open'){
+    h += '<textarea id="free" placeholder="Scriva qui, se desidera">' + (R[k]||'') + '</textarea>';
+  }
+  else if (q.tipo === 'text'){
+    h += '<input type="text" id="free" value="' + (R[k]||'') + '" placeholder="Scriva qui">';
+  }
+
+  // navigazione
+  const auto = (q.tipo==='matrix' || q.tipo==='single');
+  h += '<div class="nav">';
+  if (i>0) h += '<button class="back" onclick="prev()">Indietro</button>';
+  if (!auto) h += '<button class="next" onclick="next()">Avanti</button>';
+  h += '<button class="skip" onclick="salta()">vai alla fine · dimostrazione</button>';
+  h += '</div>';
+  if (auto) h += '<p class="hint" style="margin-top:14px">Alla risposta il questionario avanza da solo.</p>';
+
+  el('screen').innerHTML = h;
+  window.scrollTo(0,0);
+}
+
+function esc(s){ return s.replace(/'/g,"\\'"); }
+function opt(v, on, fn, square){
+  return '<button class="opt' + (on?' on':'') + '" onclick="' + fn + '(\'' + esc(v) + '\')">' +
+         '<span class="dot' + (square?' sq':'') + '"></span><span>' + v + '</span></button>';
+}
+
+function pick(v){ R[key(SCR[i])] = v; draw(); setTimeout(()=>{ i++; draw(); }, 180); }
+function toggle(v){
+  const q = SCR[i].q, k = key(SCR[i]);
+  let cur = R[k] || [];
+  if (cur.includes(v)) cur = cur.filter(x=>x!==v);
+  else if (cur.length < (q.max||99)) cur = cur.concat([v]);
+  R[k] = cur; draw();
+}
+function rank(v){
+  const q = SCR[i].q, k = key(SCR[i]);
+  let cur = R[k] || [];
+  if (cur.includes(v)) cur = cur.filter(x=>x!==v);
+  else if (cur.length < q.max) cur = cur.concat([v]);
+  R[k] = cur; draw();
+}
+function next(){
+  const q = SCR[i].q, k = key(SCR[i]);
+  if (q.tipo==='open' || q.tipo==='text'){
+    const f = el('free'); if (f) R[k] = f.value;
+  }
+  i++; draw();
+}
+function prev(){ i--; draw(); }
+function salta(){ i = SCR.length; draw(); }
+
+function fine(){
+  el('fill').style.width = '100%';
+  el('sez').textContent = 'Questionario completato';
+  el('pos').textContent = '';
+  let h = '<div id="end"><h2>Grazie per la collaborazione.</h2>' +
+    '<p class="hint">Il questionario è terminato. Di seguito il riepilogo delle risposte fornite in questa sessione.</p>';
+  h += '<div class="riep">';
+  Q.forEach(q => {
+    if (q.tipo === 'matrix'){
+      q.items.forEach((it, ii) => {
+        const v = R[q.n+'_'+(ii+1)];
+        if (v) h += row(q.n+'.'+(ii+1), it + ' — <strong>' + v + '</strong>');
+      });
+    } else {
+      let v = R[q.n];
+      if (Array.isArray(v)) v = v.length ? v.map((x,j)=>(q.tipo==='rank'?(j+1)+'. ':'')+x).join(' · ') : null;
+      if (v) h += row(q.n, v);
+    }
+  });
+  h += '</div>';
+  h += '<div class="nota"><strong>Simulazione.</strong> Questo strumento riproduce il comportamento della versione CAWI del questionario: una domanda per schermata, avanzamento automatico alla risposta, matrici trasformate in blocchi verticali, barra di avanzamento sempre visibile. Nessun dato viene registrato né trasmesso: chiudendo la pagina le risposte vengono perdute.</div>';
+  h += '<div class="nav"><button class="next" onclick="location.reload()">Ricomincia</button></div></div>';
+  el('screen').innerHTML = h;
+  window.scrollTo(0,0);
+}
+function row(k,v){ return '<div class="row"><div class="k">'+k+'</div><div class="v">'+v+'</div></div>'; }
+</script>
+</body>
+</html>
